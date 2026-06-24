@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ARISE — Solo Leveling System</title>
+<style>
+  :root {
+    --bg: #070d16;
+    --card: #0c1a2b;
+    --system: #38bdf8;
+    --system-glow: #7dd3fc;
+    --muted: #93a4bd;
+    --fg: #eef4fb;
+    --amber: #fcd34d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+    min-height: 100%;
+  }
+  body {
+    background-image:
+      linear-gradient(rgba(56,189,248,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,189,248,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px 96px; }
+
+  /* ---- System window ---- */
+  .win {
+    position: relative;
+    background: linear-gradient(145deg, rgba(12,26,43,0.92), rgba(8,18,32,0.85));
+    border: 1px solid rgba(56,189,248,0.35);
+    box-shadow: 0 0 25px rgba(56,189,248,0.10), inset 0 0 30px rgba(56,189,248,0.04);
+    padding: 18px;
+    margin-bottom: 18px;
+    animation: winin .4s ease-out both;
+  }
+  .win::before, .win::after {
+    content: ""; position: absolute; width: 12px; height: 12px;
+    border-color: rgba(125,211,252,0.85); pointer-events: none;
+  }
+  .win::before { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
+  .win::after { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; }
+  @keyframes winin { from {opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+
+  .win-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .win-title { font-size: 13px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--system); text-shadow: 0 0 8px rgba(56,189,248,.6); }
+  .win-tag { font-size: 10px; letter-spacing: .15em; color: rgba(56,189,248,.6); text-transform: uppercase; }
+  .divider { height:1px; background: linear-gradient(90deg, transparent, rgba(56,189,248,.6), transparent); margin-bottom:16px; }
+
+  .glow { text-shadow: 0 0 8px rgba(56,189,248,.7), 0 0 18px rgba(56,189,248,.35); }
+  .muted { color: var(--muted); }
+  .system { color: var(--system); }
+  .amber { color: var(--amber); }
+  .small { font-size: 11px; }
+  .tiny { font-size: 10px; }
+
+  /* ---- quest / toggle item ---- */
+  .item {
+    display:flex; gap:12px; align-items:flex-start; width:100%; text-align:left;
+    border:1px solid rgba(56,189,248,.15); background: rgba(0,0,0,.2);
+    padding:10px 12px; transition: all .15s; color: inherit;
+  }
+  .item:hover { border-color: rgba(56,189,248,.4); }
+  .item.done { border-color: rgba(56,189,248,.4); background: rgba(56,189,248,.1); }
+  .check {
+    flex:none; width:20px; height:20px; border:1px solid rgba(56,189,248,.4);
+    display:flex; align-items:center; justify-content:center; margin-top:2px;
+    color: transparent; font-weight: 900; font-size: 13px;
+  }
+  .item.done .check { background: var(--system); border-color: var(--system); color: #04121f; }
+  .item-title { font-size: 14px; font-weight: 500; }
+  .item.done .item-title { color: rgba(56,189,248,.7); text-decoration: line-through; }
+  .item-sub { font-size: 11px; color: var(--muted); margin-top: 2px; line-height:1.45; }
+  .item-meta { flex:none; text-align:right; }
+
+  /* ---- grids ---- */
+  .grid2 { display:grid; gap:12px; grid-template-columns: 1fr; }
+  .grid3 { display:grid; gap:10px; grid-template-columns: 1fr 1fr 1fr; }
+  .grid6 { display:grid; gap:10px; grid-template-columns: repeat(3,1fr); }
+  @media (min-width: 720px) {
+    .grid2 { grid-template-columns: 1fr 1fr; }
+    .grid6 { grid-template-columns: repeat(6,1fr); }
+  }
+
+  .stat-box { border:1px solid rgba(56,189,248,.15); background: rgba(0,0,0,.2); padding:12px; text-align:center; }
+
+  .bar { height:8px; width:100%; background: rgba(0,0,0,.5); overflow:hidden; position:relative; }
+  .bar > i { display:block; height:100%; background: linear-gradient(90deg, rgba(56,189,248,.7), var(--system));
+    box-shadow: 0 0 10px rgba(56,189,248,.6); transition: width .5s; }
+  .barthin { height:4px; }
+
+  .btn {
+    border:1px solid var(--system); background: rgba(56,189,248,.1); color: var(--system);
+    padding: 12px 18px; font-size: 13px; letter-spacing: .15em; text-transform: uppercase; font-weight:700;
+    transition: all .15s; text-align:center;
+  }
+  .btn:hover { background: rgba(56,189,248,.2); }
+  .btn:disabled { opacity:.4; cursor: not-allowed; }
+  .btn-ghost { background: transparent; border-color: rgba(255,255,255,.6); color: #fff; }
+  .btn-ghost:hover { background:#fff; color:#000; }
+
+  .chip { border:1px solid rgba(56,189,248,.3); padding: 2px 8px; font-size:10px; color: rgba(56,189,248,.85); }
+
+  input.txt {
+    width:100%; border:1px solid rgba(56,189,248,.3); background: rgba(0,0,0,.4); color: var(--fg);
+    padding:12px 14px; outline:none; font-family:inherit; font-size:14px;
+  }
+  input.txt:focus { border-color: var(--system); }
+
+  /* ---- nav ---- */
+  .topnav { position: sticky; top:0; z-index:40; background: rgba(7,13,22,.9); backdrop-filter: blur(8px);
+    border-bottom:1px solid rgba(56,189,248,.2); }
+  .topnav .row { max-width:980px; margin:0 auto; display:flex; align-items:center; gap:6px; padding:10px 12px; flex-wrap:wrap; }
+  .navbtn { border:1px solid transparent; padding:8px 12px; font-size:13px; color: var(--muted); background:transparent; }
+  .navbtn:hover { color: var(--fg); }
+  .navbtn.active { border-color: rgba(56,189,248,.4); background: rgba(56,189,248,.1); color: var(--system); text-shadow:0 0 8px rgba(56,189,248,.6); }
+  .logo { font-weight:800; font-style:italic; letter-spacing:.18em; color: var(--system); transform: skewX(-10deg);
+    text-shadow:0 0 8px rgba(56,189,248,.6); font-size:20px; margin-right: auto; }
+
+  /* ---- landing ---- */
+  .landing { position: relative; min-height: 100vh; overflow:hidden; background:#000; }
+  .stars {
+    position:absolute; inset:0; opacity:.3;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, #fff, transparent),
+      radial-gradient(1px 1px at 60% 70%, #fff, transparent),
+      radial-gradient(1px 1px at 50% 50%, #fff, transparent),
+      radial-gradient(1px 1px at 80% 10%, #fff, transparent),
+      radial-gradient(1px 1px at 90% 60%, #fff, transparent),
+      radial-gradient(1px 1px at 33% 80%, #fff, transparent),
+      radial-gradient(1px 1px at 15% 60%, #fff, transparent),
+      radial-gradient(1px 1px at 70% 40%, #fff, transparent);
+    background-size: 200% 200%,180% 180%,250% 250%,220% 220%,190% 190%,240% 240%,210% 210%,230% 230%;
+  }
+  .landing .inner { position:relative; z-index:10; min-height:100vh; display:flex; align-items:center;
+    justify-content:flex-end; padding: 80px 24px; }
+  .landing .box { max-width: 520px; }
+  .hline { display:flex; align-items:center; gap:8px; opacity:.6; margin-bottom:12px; }
+  .hline .l { height:1px; background:#fff; }
+  .h1 { font-size: clamp(28px, 6vw, 52px); font-weight:800; letter-spacing:.08em; margin-bottom:16px; }
+  .lead { font-size: 15px; color:#cbd5e1; line-height:1.7; margin-bottom:24px; opacity:.85; }
+  .landing-actions { display:flex; gap:12px; flex-wrap:wrap; }
+  .corner { position:absolute; width:40px; height:40px; z-index:20; }
+
+  .row-between { display:flex; align-items:center; justify-content:space-between; }
+  .gap { display:flex; gap:10px; align-items:center; }
+  .mt { margin-top:14px; } .mb { margin-bottom:10px; }
+  .hidden { display:none !important; }
+  ul.clean { list-style:none; } ul.clean li { margin-bottom:6px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+"use strict";
+// ======================================================================
+//  ARISE — single-file Solo Leveling personal system
+// ======================================================================
+var STORAGE_KEY = "arise-system-v1";
+
+// ---------- DATA ----------
+var DAY_A = {
+  id:"A", title:"ДЕНЬ A — ТЯГА", subtitle:"Спина · Бицепс · Пресс",
+  target:"V-образная спина Найтвинга и рельефный пресс.",
+  focusGroups:["back","arms","core"],
+  exercises:[
+    { id:"a1", name:"Подтягивания прямым хватом", sets:4, reps:"5–6", groups:["back"],
+      note:"Не доводи до отказа в первом подходе, распределяй силы.",
+      july:"+1 повтор в каждый подход (4×7).", aug:"Последний подход — до отказа." },
+    { id:"a2", name:"Подтягивания обратным хватом", sets:3, reps:"5", groups:["back","arms"],
+      note:"Ладонями к себе. Акцент на бицепс.",
+      july:"+1 повтор в каждый подход (3×6).", aug:"Последний подход — до отказа." },
+    { id:"a3", name:"Австралийские подтягивания", sets:3, reps:"10–12", groups:["back","shoulders"],
+      note:"На низком турнике. Толщина спины и задняя дельта.",
+      july:"Отдых между подходами 60–90 сек.", aug:"Пауза 1 сек вверху, лопатки сведены." },
+    { id:"a4", name:"Подъём коленей к груди на турнике", sets:4, reps:"12–15", groups:["core"],
+      note:"Можно на брусьях. Пресс. Без раскачки.",
+      july:"Сократи отдых, негатив 2 сек.", aug:"Подъём прямых ног, если получается." }
+  ]
+};
+var DAY_B = {
+  id:"B", title:"ДЕНЬ B — ЖИМ + НОГИ", subtitle:"Грудь · Трицепс · Плечи · Квадрицепсы",
+  target:"Прорисованная грудь «Fight Club» и атлетичные ноги.",
+  focusGroups:["chest","arms","shoulders","legs"],
+  exercises:[
+    { id:"b1", name:"Отжимания на брусьях", sets:4, reps:"6–7", groups:["chest","arms"],
+      note:"Опускайся до угла 90° в локтях.",
+      july:"+1 повтор в каждый подход (4×8).", aug:"Последний подход — до отказа." },
+    { id:"b2", name:"Отжимания с ногами на возвышенности", sets:3, reps:"12–15", groups:["chest","shoulders"],
+      note:"Нагрузка на верх груди и передние дельты.",
+      july:"Отдых до 60–90 сек.", aug:"Взрывной стиль — отрыв ладоней." },
+    { id:"b3", name:"Алмазные отжимания", sets:3, reps:"10–12", groups:["arms","chest"],
+      note:"Руки близко. Акцент на трицепс и центр груди.",
+      july:"Сократи отдых, негатив 2 сек.", aug:"Взрывной стиль — отрыв ладоней." },
+    { id:"b4", name:"Приседания с выпрыгиванием", sets:4, reps:"15", groups:["legs"],
+      note:"Взрывная сила ног. Мягкое приземление.",
+      july:"+2 повтора (4×17).", aug:"Последний подход — максимум за 40 сек." },
+    { id:"b5", name:"Выпады", sets:3, reps:"12 на ногу", groups:["legs"],
+      note:"Спина прямая, колено не валится внутрь.",
+      july:"Отдых до 60–90 сек.", aug:"Болгарские выпады, если готов." }
+  ]
+};
+var WORKOUT_DAYS = [DAY_A, DAY_B];
+var SCHEDULE = [
+  { day:"Понедельник", label:"День A — Тяга", workout:"A" },
+  { day:"Вторник", label:"День B — Жим + Ноги", workout:"B" },
+  { day:"Среда", label:"Отдых", workout:"rest" },
+  { day:"Четверг", label:"День A — Тяга", workout:"A" },
+  { day:"Пятница", label:"День B — Жим + Ноги", workout:"B" },
+  { day:"Суббота", label:"Восстановление", workout:"rest" },
+  { day:"Воскресенье", label:"Восстановление", workout:"rest" }
+];
+var WARMUP = "Перед тренировкой — разминка 5–7 мин (суставная, лёгкие махи). Отдых между подходами 1,5–2 мин. Темп: 2 сек вниз, 1 сек вверх, фиксация вверху.";
+var PHASES = {
+  june:{ label:"ИЮНЬ — ОБЪЁМ", tag:"Фаза 1", goal:"Идеально чистая техника.",
+    rules:["Придерживайся указанных подходов и повторов.","Без рывков: 2 сек вниз, 1 сек вверх.","Фиксация вверху, плавный негатив."] },
+  july:{ label:"ИЮЛЬ — ИНТЕНСИВНОСТЬ", tag:"Фаза 2", goal:"Добавляем объём, сокращаем отдых.",
+    rules:["+1 повтор в каждый подход на турнике и брусьях.","В отжиманиях отдых 60–90 сек.","Держи технику, не гонись за читингом."] },
+  august:{ label:"АВГУСТ — ПИК", tag:"Фаза 3", goal:"Максимум и взрывная сила.",
+    rules:["Последний подход подтягиваний и брусьев — до отказа.","В отжиманиях взрывной стиль (отрыв ладоней).","Контроль питания: жир 10–12%."] }
+};
+var MEALS = [
+  { id:"m1", time:"07:30", title:"Завтрак", goal:"Запуск метаболизма: медленные углеводы + белок", items:["Овсянка на воде/молоке","2–3 яйца","Ягоды или банан"] },
+  { id:"m2", time:"11:00", title:"Перекус", goal:"Поддержать белок между приёмами", items:["Творог 5%","Горсть орехов","Яблоко"] },
+  { id:"m3", time:"14:00", title:"Обед", goal:"Главный приём: белок + сложные углеводы + овощи", items:["Куриное филе / рыба","Гречка или бурый рис","Овощной салат"] },
+  { id:"m4", time:"17:00", title:"Предтрен", goal:"Энергия на тренировку (за 1–1,5 ч до)", items:["Банан","Тост с арахисовой пастой","Зелёный чай / кофе"] },
+  { id:"m5", time:"20:00", title:"Ужин", goal:"Восстановление: белок + овощи", items:["Омлет / рыба / индейка","Тушёные овощи","Кефир перед сном"] }
+];
+var RECIPES = [
+  { id:"r1", title:"Боевая овсянка чемпиона", kcal:420, protein:28, tags:["завтрак","энергия"],
+    ingredients:["60 г овсяных хлопьев","200 мл молока/воды","1 ложка протеина или 2 белка","Ягоды, 1 ч.л. мёда"],
+    steps:["Свари овсянку 5 минут.","Вмешай протеин (или белки отдельно).","Добавь ягоды и мёд."] },
+  { id:"r2", title:"Куриное филе + гречка", kcal:540, protein:52, tags:["обед","набор"],
+    ingredients:["200 г куриного филе","80 г гречки (сухой вес)","Специи, немного масла","Свежие овощи"],
+    steps:["Отвари гречку (1:2, 15 мин).","Обжарь филе по 4–5 мин с каждой стороны.","Подавай с салатом."] },
+  { id:"r3", title:"Омлет «Сушка»", kcal:300, protein:30, tags:["ужин","белок"],
+    ingredients:["3 яйца (или 1 целое + 3 белка)","Шпинат / помидоры / перец","Соль, перец"],
+    steps:["Взбей яйца, добавь овощи.","Готовь под крышкой 4–5 минут.","Минимум масла — для рельефа."] },
+  { id:"r4", title:"Творожный крем перед сном", kcal:220, protein:32, tags:["перед сном","восстановление"],
+    ingredients:["200 г творога 5%","Корица","Половина банана"],
+    steps:["Взбей творог блендером.","Добавь корицу и банан.","Казеин работает всю ночь."] }
+];
+var HABITS = [
+  { id:"h1", title:"Подъём в 06:30", desc:"Ранний подъём задаёт ритм дня.", icon:"🌅", stat:"PER", xp:15 },
+  { id:"h2", title:"Чтение 20 минут", desc:"Книга вместо ленты.", icon:"📖", stat:"INT", xp:15 },
+  { id:"h3", title:"Вода 2–2,5 л", desc:"8–10 стаканов за день.", icon:"💧", stat:"VIT", xp:10 },
+  { id:"h4", title:"Без сахара и фастфуда", desc:"Никакого пищевого мусора.", icon:"🚫", stat:"VIT", xp:20 },
+  { id:"h5", title:"Сон до 23:00", desc:"7–8 часов — главный анаболик.", icon:"🌙", stat:"VIT", xp:15 },
+  { id:"h6", title:"10 минут растяжки", desc:"Мобильность, профилактика травм.", icon:"🤸", stat:"AGI", xp:10 },
+  { id:"h7", title:"Холодный душ", desc:"Дисциплина и бодрость.", icon:"❄️", stat:"PER", xp:10 }
+];
+var STATS = [
+  { key:"STR", ru:"Сила" }, { key:"VIT", ru:"Выносл." }, { key:"AGI", ru:"Ловкость" },
+  { key:"INT", ru:"Интеллект" }, { key:"PER", ru:"Дисциплина" }, { key:"SENSE", ru:"Фокус" }
+];
+var MUSCLE_LABELS = { back:"Спина", chest:"Грудь", shoulders:"Плечи", arms:"Руки", legs:"Ноги", core:"Пресс" };
+var LEVEL_LABELS = { novice:"Новичок", intermediate:"Средний", advanced:"Продвинутый" };
+var GROUPS = ["back","chest","shoulders","arms","legs","core"];
+var FITNESS_TESTS = [
+  { key:"pullups", title:"Подтягивания прямым хватом", hint:{novice:"0–3 раза",intermediate:"4–8 раз",advanced:"9+ раз"} },
+  { key:"dips", title:"Отжимания на брусьях", hint:{novice:"0–4 раза",intermediate:"5–10 раз",advanced:"11+ раз"} },
+  { key:"pushups", title:"Отжимания от пола", hint:{novice:"0–15 раз",intermediate:"16–30 раз",advanced:"31+ раз"} },
+  { key:"squats", title:"Приседания", hint:{novice:"0–20 раз",intermediate:"21–40 раз",advanced:"41+ раз"} },
+  { key:"core", title:"Подъём коленей на турнике", hint:{novice:"0–8 раз",intermediate:"9–15 раз",advanced:"16+ раз"} }
+];
+var LEVELS = ["novice","intermediate","advanced"];
+var RANK_THRESHOLDS = [ {r:"E",l:1},{r:"D",l:5},{r:"C",l:10},{r:"B",l:18},{r:"A",l:28},{r:"S",l:40} ];
+
+// ---------- HELPERS ----------
+function todayKey(d){ d=d||new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function currentPhase(){ var m=new Date().getMonth(); if(m===6)return"july"; if(m===7)return"august"; return"june"; }
+function xpForLevel(l){ return 100 + (l-1)*40; }
+function rankForLevel(l){ var r="E"; for(var i=0;i<RANK_THRESHOLDS.length;i++){ if(l>=RANK_THRESHOLDS[i].l) r=RANK_THRESHOLDS[i].r; } return r; }
+function exForPhase(ex,p){ if(p==="july"&&ex.july)return ex.july; if(p==="august"&&ex.aug)return ex.aug; return ex.note||""; }
+function scheduleToday(){ var j=new Date().getDay(); return SCHEDULE[(j+6)%7]; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function groupStat(g){ return (g==="legs"||g==="core") ? "AGI" : "STR"; }
+
+var HABIT_MAP={}, EX_MAP={};
+HABITS.forEach(function(h){ HABIT_MAP[h.id]=h; });
+WORKOUT_DAYS.forEach(function(d){ d.exercises.forEach(function(e){ EX_MAP[e.id]=e; }); });
+
+var XP = { exercise:12, meal:8, water:3, maxWater:10 };
+function logXp(l){
+  var xp = l.exercisesDone.length*XP.exercise + l.mealsDone.length*XP.meal + Math.min(l.water,XP.maxWater)*XP.water;
+  l.habitsDone.forEach(function(id){ xp += (HABIT_MAP[id]?HABIT_MAP[id].xp:0); });
+  return xp;
+}
+
+// ---------- STATE ----------
+function defaultProfile(){
+  return { name:"ОХОТНИК", phase:currentPhase(), selectedGroups:GROUPS.slice(),
+    fitness:{pullups:null,dips:null,pushups:null,squats:null,core:null}, onboarded:false };
+}
+function defaultState(){ return { profile:defaultProfile(), logs:{} }; }
+var state = load();
+function load(){
+  try { var raw = localStorage.getItem(STORAGE_KEY); if(raw){ var p=JSON.parse(raw);
+    p.profile = Object.assign(defaultProfile(), p.profile||{}); p.logs = p.logs||{}; return p; } } catch(e){}
+  return defaultState();
+}
+function save(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){} }
+function emptyLog(k){ return { date:k, exercisesDone:[], habitsDone:[], mealsDone:[], water:0, workoutDay:null }; }
+function todayLog(){ var k=todayKey(); if(!state.logs[k]) state.logs[k]=emptyLog(k); return state.logs[k]; }
+function toggleArr(a,id){ var i=a.indexOf(id); if(i>=0)a.splice(i,1); else a.push(id); }
+
+function derive(){
+  var stats={STR:10,VIT:10,AGI:10,INT:10,PER:10,SENSE:10};
+  var totalXp=0, keys=Object.keys(state.logs);
+  keys.forEach(function(k){
+    var log=state.logs[k]; totalXp += logXp(log);
+    log.exercisesDone.forEach(function(id){ var ex=EX_MAP[id]; if(ex){ ex.groups.forEach(function(g){ stats[groupStat(g)]+=1; }); stats.SENSE+=1; } });
+    log.habitsDone.forEach(function(id){ var h=HABIT_MAP[id]; if(h) stats[h.stat]+=2; });
+    stats.VIT += log.mealsDone.length;
+    if(Math.min(log.water,XP.maxWater)>=8) stats.VIT+=1;
+  });
+  var level=1, rem=totalXp;
+  while(rem>=xpForLevel(level)){ rem-=xpForLevel(level); level++; }
+  // streak
+  var streak=0, d=new Date();
+  for(var i=0;i<400;i++){
+    var lg=state.logs[todayKey(d)];
+    var active = lg && (lg.exercisesDone.length||lg.habitsDone.length||lg.mealsDone.length||lg.water>0);
+    if(active) streak++; else if(i!==0) break;
+    d.setDate(d.getDate()-1);
+  }
+  return { totalXp:totalXp, level:level, xpInto:rem, xpToNext:xpForLevel(level), rank:rankForLevel(level), stats:stats, streak:streak };
+}
+
+// ---------- VIEW STATE ----------
+var view = state.profile.onboarded ? "app" : "landing";
+var tab = "status";
+var openDay = scheduleToday().workout==="B" ? "B" : "A";
+
+// ---------- RENDER HELPERS ----------
+function win(title, tag, body){
+  return '<section class="win"><div class="win-head"><div class="gap">'
+    + '<span class="system">◆</span><h2 class="win-title">'+esc(title)+'</h2></div>'
+    + (tag? '<span class="win-tag">'+esc(tag)+'</span>':'') + '</div><div class="divider"></div>'+body+'</section>';
+}
+function questItem(action, id, done, title, sub, meta, reward){
+  return '<button class="item'+(done?' done':'')+'" data-action="'+action+'" data-id="'+id+'">'
+    + '<span class="check">✓</span><span style="flex:1"><span class="item-title">'+esc(title)+'</span>'
+    + (sub? '<span class="item-sub">'+esc(sub)+'</span>':'') + '</span>'
+    + '<span class="item-meta">'+(meta?'<span class="small system" style="font-weight:700">'+esc(meta)+'</span>':'')
+    + (reward?'<br><span class="tiny amber">'+esc(reward)+'</span>':'')+'</span></button>';
+}
+function bar(val,max){ var p=Math.max(0,Math.min(100,(val/max)*100)); return '<div class="bar"><i style="width:'+p+'%"></i></div>'; }
+
+// ---------- VIEWS ----------
+function renderLanding(){
+  return '<div class="landing"><div class="stars"></div>'
+    + '<div id="us-host" style="position:absolute;inset:0;"></div>'
+    + '<div class="corner" style="top:0;left:0;border-top:2px solid rgba(255,255,255,.3);border-left:2px solid rgba(255,255,255,.3)"></div>'
+    + '<div class="corner" style="top:0;right:0;border-top:2px solid rgba(255,255,255,.3);border-right:2px solid rgba(255,255,255,.3)"></div>'
+    + '<div class="inner"><div class="box">'
+    + '<div class="hline"><div class="l" style="width:32px"></div><span class="tiny">∞</span><div class="l" style="flex:1"></div></div>'
+    + '<h1 class="h1 glow">ARISE, HUNTER</h1>'
+    + '<p class="lead">Только ты видишь Систему. Каждая тренировка, каждый приём пищи, каждая привычка — это очки опыта. Стань сильнейшим. Подними свой уровень в одиночку.</p>'
+    + '<div class="landing-actions">'
+    + '<button class="btn" data-action="goto" data-view="app">Войти в Систему</button>'
+    + '<button class="btn btn-ghost" data-action="goto" data-view="onboarding">Оценка уровня</button>'
+    + '</div></div></div></div>';
+}
+
+function renderOnboarding(){
+  var p=state.profile;
+  var nameVal = p.name==="ОХОТНИК" ? "" : p.name;
+  var html = '<div class="wrap" style="max-width:680px;padding-top:40px">'
+    + '<div style="text-align:center;margin-bottom:28px">'
+    + '<div class="tiny system" style="letter-spacing:.3em">АКТИВАЦИЯ СИСТЕМЫ</div>'
+    + '<h1 class="h1 glow" style="font-size:30px;margin:8px 0">ОЦЕНКА УРОВНЯ</h1>'
+    + '<p class="muted small">Ответь на вопросы — Система настроит протокол под тебя.</p></div>';
+
+  html += win("Имя игрока","", '<input id="name-input" class="txt" maxlength="20" placeholder="Введи своё имя" value="'+esc(nameVal)+'">');
+
+  var tests = FITNESS_TESTS.map(function(t){
+    var cur = p.fitness[t.key];
+    var opts = LEVELS.map(function(lv){
+      var act = cur===lv;
+      return '<button class="stat-box" data-action="set-fitness" data-key="'+t.key+'" data-level="'+lv+'" '
+        + 'style="'+(act?'border-color:rgba(56,189,248,.5);background:rgba(56,189,248,.1)':'')+'">'
+        + '<div class="small" style="font-weight:700">'+LEVEL_LABELS[lv]+'</div><div class="tiny muted">'+t.hint[lv]+'</div></button>';
+    }).join("");
+    return '<div class="mb"><div class="small" style="font-weight:700;margin-bottom:6px">'+esc(t.title)+'</div><div class="grid3">'+opts+'</div></div>';
+  }).join("");
+  html += win("Базовые упражнения","ТЕСТ", '<p class="muted small mb">Оцени, сколько повторов делаешь в одном подходе с чистой техникой.</p>'+tests);
+
+  var groupBtns = GROUPS.map(function(g){
+    var act = p.selectedGroups.indexOf(g)>=0;
+    return '<button class="stat-box" data-action="toggle-group" data-group="'+g+'" '
+      + 'style="'+(act?'border-color:rgba(56,189,248,.5);background:rgba(56,189,248,.1);color:var(--system)':'color:var(--muted)')+';font-weight:600">'
+      + MUSCLE_LABELS[g]+'</button>';
+  }).join("");
+  html += win("Целевые группы мышц","ФОКУС", '<p class="muted small mb">Выбери, что прокачивать. По умолчанию — всё тело.</p><div class="grid3">'+groupBtns+'</div>');
+
+  var allRated = FITNESS_TESTS.every(function(t){ return p.fitness[t.key]; });
+  var canFinish = (nameVal.trim().length>0 || document.getElementById) && p.selectedGroups.length>0 && allRated;
+  html += '<button class="btn" style="width:100%" data-action="finish-onboarding"'+(allRated&&p.selectedGroups.length?'':' disabled')+'>Активировать Систему →</button>';
+  if(!allRated || !p.selectedGroups.length) html += '<p class="muted tiny" style="text-align:center;margin-top:8px">Оцени все упражнения и выбери хотя бы одну группу мышц.</p>';
+  html += '</div>';
+  return html;
+}
+
+function renderTopNav(){
+  var tabs=[["status","Статус"],["workout","Тренировки"],["nutrition","Питание"],["habits","Привычки"]];
+  return '<div class="topnav"><div class="row"><span class="logo">ARISE</span>'
+    + tabs.map(function(t){ return '<button class="navbtn'+(tab===t[0]?' active':'')+'" data-action="set-tab" data-tab="'+t[0]+'">'+t[1]+'</button>'; }).join("")
+    + '<button class="navbtn" data-action="goto" data-view="landing">Главная</button></div></div>';
+}
+
+function renderStatus(){
+  var d=derive(), p=state.profile, ph=PHASES[p.phase], sc=scheduleToday();
+  var wd = sc.workout!=="rest" ? (sc.workout==="A"?DAY_A:DAY_B) : null;
+  var log=todayLog();
+  var html="";
+
+  if(!p.onboarded){
+    html += '<button class="item" data-action="goto" data-view="onboarding" style="border-color:rgba(252,211,77,.4);background:rgba(252,211,77,.1);color:#fde68a;margin-bottom:18px">'
+      + '<span style="flex:1">✨ Пройди оценку уровня, чтобы Система настроила план под тебя.</span><span>→</span></button>';
+  }
+
+  // status window
+  var statusBody = '<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center">'
+    + '<div class="gap"><div style="position:relative;width:78px;height:78px;border:2px solid rgba(56,189,248,.5);display:flex;align-items:center;justify-content:center">'
+    + '<span style="font-size:30px;font-weight:800" class="system glow">'+d.rank+'</span></div>'
+    + '<div><div class="tiny muted" style="letter-spacing:.2em">ИГРОК</div>'
+    + '<div style="font-size:20px;font-weight:800">'+esc(p.name)+'</div>'
+    + '<div class="system" style="font-size:14px;margin-top:4px">LV. '+d.level+' &nbsp;•&nbsp; <span class="amber">🔥 '+d.streak+' дн.</span></div></div></div>'
+    + '<div style="flex:1;min-width:200px"><div class="row-between small muted mb"><span>ОПЫТ</span><span class="system">'+d.xpInto+' / '+d.xpToNext+' XP</span></div>'
+    + bar(d.xpInto,d.xpToNext) + '<div class="tiny muted mt">Всего опыта: <span class="system">'+d.totalXp+'</span></div></div></div>';
+  html += win("Окно Статуса","Ранг "+d.rank, statusBody);
+
+  // stats + quest of day (two columns)
+  var statBody = '<div class="grid2">'+STATS.map(function(s){
+    var v=d.stats[s.key], pct=Math.min(100,(v/80)*100);
+    return '<div><div class="row-between"><span class="system" style="font-weight:700">'+s.key+'</span><span style="font-weight:700">'+v+'</span></div>'
+      + '<div class="tiny muted" style="margin-bottom:6px">'+s.ru+'</div><div class="bar barthin"><i style="width:'+pct+'%"></i></div></div>';
+  }).join("")+'</div>';
+
+  var questBody;
+  if(wd){
+    var done = wd.exercises.filter(function(e){return log.exercisesDone.indexOf(e.id)>=0;}).length;
+    questBody = '<button class="item" data-action="set-tab" data-tab="workout" style="display:block">'
+      + '<div class="row-between"><span class="tiny system">ТРЕНИРОВКА</span><span class="system">→</span></div>'
+      + '<div style="font-size:17px;font-weight:800;margin-top:4px">'+wd.title+'</div>'
+      + '<div class="small muted">'+wd.subtitle+'</div>'
+      + '<div style="margin:8px 0">'+wd.focusGroups.map(function(g){return '<span class="chip" style="margin-right:4px">'+MUSCLE_LABELS[g]+'</span>';}).join("")+'</div>'
+      + '<div class="row-between small muted mb"><span>Прогресс</span><span class="system">'+done+' / '+wd.exercises.length+'</span></div>'+bar(done,wd.exercises.length)+'</button>';
+  } else {
+    questBody = '<div class="stat-box" style="padding:24px"><div class="system" style="font-size:18px;font-weight:800">ДЕНЬ ОТДЫХА</div>'
+      + '<div class="small muted mt">Восстановление — часть прокачки. Сон, вода, растяжка.</div></div>';
+  }
+  questBody += '<div class="gap" style="border:1px solid rgba(56,189,248,.15);background:rgba(0,0,0,.2);padding:8px 12px;margin-top:14px">'
+    + '<span class="tiny system">'+ph.tag+'</span><span class="small" style="font-weight:600">'+ph.label+'</span></div>';
+
+  html += '<div class="grid2">'+win("Характеристики","STATUS",statBody)+win("Квест дня",sc.day,questBody)+'</div>';
+
+  // habits
+  var habitsBody = '<div class="grid2">'+HABITS.map(function(h){
+    return questItem("toggle-habit",h.id, log.habitsDone.indexOf(h.id)>=0, h.title, h.desc, "+"+h.xp+" XP","");
+  }).join("")+'</div>';
+  html += win("Ежедневные привычки","DAILY",habitsBody);
+
+  // water
+  var waterDots=""; for(var i=0;i<10;i++){ waterDots += '<div style="height:8px;flex:1;background:'+(i<log.water?'var(--system)':'rgba(0,0,0,.5)')+'"></div>'; }
+  var waterBody = '<div class="row-between"><div class="gap"><span style="font-size:24px">💧</span>'
+    + '<div><div style="font-size:24px;font-weight:800">'+log.water+'<span class="small muted"> / 10</span></div><div class="tiny muted">стаканов по 250 мл</div></div></div>'
+    + '<div class="gap"><button class="navbtn" style="border:1px solid rgba(56,189,248,.3);width:42px;height:42px;color:var(--system)" data-action="water" data-delta="-1">−</button>'
+    + '<button class="navbtn" style="border:1px solid rgba(56,189,248,.4);background:rgba(56,189,248,.1);width:42px;height:42px;color:var(--system)" data-action="water" data-delta="1">+</button></div></div>'
+    + '<div style="display:flex;gap:4px;margin-top:12px">'+waterDots+'</div>';
+  html += win("Гидратация","2–2,5 Л",waterBody);
+
+  return '<div class="wrap" style="padding-top:24px">'+html+'</div>';
+}
+
+function renderWorkout(){
+  var p=state.profile, log=todayLog();
+  var html = '<div style="margin-bottom:18px"><h1 class="h1 glow" style="font-size:24px;margin:0">ПРОТОКОЛ ТРЕНИРОВОК</h1>'
+    + '<p class="muted small">Работа с собственным весом · цель: тело Найтвинга / Сон Джин-У</p></div>';
+  html += '<div class="item" style="margin-bottom:18px"><span>ℹ️</span><span class="small muted">'+esc(WARMUP)+'</span></div>';
+
+  // phases
+  var phaseBtns = Object.keys(PHASES).map(function(k){
+    var def=PHASES[k], act=p.phase===k;
+    return '<button class="stat-box" data-action="set-phase" data-phase="'+k+'" style="text-align:left;'+(act?'border-color:rgba(56,189,248,.5);background:rgba(56,189,248,.1)':'')+'">'
+      + '<div class="tiny system">'+def.tag+'</div><div class="small" style="font-weight:800;margin-top:2px">'+def.label+'</div>'
+      + '<div class="tiny muted" style="margin-top:4px">'+def.goal+'</div></button>';
+  }).join("");
+  var rules = '<ul class="clean" style="border-top:1px solid rgba(56,189,248,.15);padding-top:12px;margin-top:14px">'
+    + PHASES[p.phase].rules.map(function(r){return '<li class="small muted"><span class="system">▹</span> '+esc(r)+'</li>';}).join("")+'</ul>';
+  html += win("Фаза прогрессии","3 МЕСЯЦА",'<div class="grid3">'+phaseBtns+'</div>'+rules);
+
+  // schedule
+  var schBody = '<div class="grid2">'+SCHEDULE.map(function(s){
+    var rest = s.workout==="rest";
+    return '<div class="row-between" style="border:1px solid '+(rest?'rgba(56,189,248,.1)':'rgba(56,189,248,.25)')+';background:'+(rest?'rgba(0,0,0,.1)':'rgba(56,189,248,.05)')+';padding:8px 12px">'
+      + '<span class="small" style="font-weight:600">'+s.day+'</span><span class="small '+(rest?'muted':'system')+'">'+s.label+'</span></div>';
+  }).join("")+'</div>';
+  html += win("Расписание недели","4 ТРЕНИРОВКИ",schBody);
+
+  // day tabs
+  html += '<div style="display:flex;gap:8px;margin-bottom:18px">'+WORKOUT_DAYS.map(function(dd){
+    var act=openDay===dd.id;
+    return '<button class="stat-box" data-action="open-day" data-day="'+dd.id+'" style="flex:1;text-align:left;'+(act?'border-color:rgba(56,189,248,.5);background:rgba(56,189,248,.1)':'')+'">'
+      + '<div class="small" style="font-weight:800">🏋️ '+dd.title+'</div><div class="tiny muted">'+dd.subtitle+'</div></button>';
+  }).join("")+'</div>';
+
+  // selected day
+  var dd = openDay==="A"?DAY_A:DAY_B;
+  var exBody = '<div class="small system mb">🎯 '+dd.target+'</div>'
+    + '<div class="mb">'+dd.focusGroups.map(function(g){return '<span class="chip" style="margin-right:4px">'+MUSCLE_LABELS[g]+'</span>';}).join("")+'</div>'
+    + dd.exercises.map(function(ex,i){
+        return questItem("toggle-exercise",ex.id, log.exercisesDone.indexOf(ex.id)>=0, (i+1)+". "+ex.name, exForPhase(ex,p.phase), ex.sets+" × "+ex.reps, "+12 XP");
+      }).join("");
+  html += win(dd.title, PHASES[p.phase].tag, '<div style="display:flex;flex-direction:column;gap:8px">'+exBody+'</div>');
+
+  return '<div class="wrap" style="padding-top:24px">'+html+'</div>';
+}
+
+function renderNutrition(){
+  var log=todayLog();
+  var PRINC=["Форма — минимальный % жира (~10–12%), при котором видны волокна.","Убери мусор: фастфуд, чипсы, газировку, чистый сахар.","Белок: яйца, куриное филе, творог, рыба.","Сложные углеводы: овсянка, гречка, бурый рис.","Пей 2–2,5 л чистой воды в день."];
+  var html = '<div style="margin-bottom:18px"><h1 class="h1 glow" style="font-size:24px;margin:0">ПРОТОКОЛ ПИТАНИЯ</h1>'
+    + '<p class="muted small">Форма «Fight Club»: ~10–12% жира, чистый белок</p></div>';
+  html += win("Принципы","ОСНОВА",'<ul class="clean">'+PRINC.map(function(x){return '<li class="small muted"><span class="system">✓</span> '+esc(x)+'</li>';}).join("")+'</ul>');
+
+  var mealsBody = MEALS.map(function(m){
+    var done=log.mealsDone.indexOf(m.id)>=0;
+    return '<button class="item'+(done?' done':'')+'" data-action="toggle-meal" data-id="'+m.id+'">'
+      + '<span class="system" style="font-weight:700;flex:none">🕐 '+m.time+'</span>'
+      + '<span style="flex:1;border-left:1px solid rgba(56,189,248,.2);padding-left:12px">'
+      + '<span class="row-between"><span class="item-title">'+m.title+'</span>'+(done?'<span class="tiny system">✓ +8 XP</span>':'')+'</span>'
+      + '<span class="item-sub">'+m.goal+'</span><span class="item-sub" style="color:#cbd5e1">'+m.items.join(" · ")+'</span></span></button>';
+  }).join("");
+  html += win("График приёмов пищи","ВРЕМЯ",'<div style="display:flex;flex-direction:column;gap:8px">'+mealsBody+'</div>');
+
+  var recBody = '<div class="grid2">'+RECIPES.map(function(r){
+    return '<article class="stat-box" style="text-align:left">'
+      + '<div class="small" style="font-weight:800">'+r.title+'</div>'
+      + '<div class="tiny muted" style="margin:4px 0"><span class="amber">🔥 '+r.kcal+' ккал</span> &nbsp; <span class="system">🥩 '+r.protein+' г белка</span></div>'
+      + '<div class="mb">'+r.tags.map(function(t){return '<span class="chip" style="margin-right:4px">'+t+'</span>';}).join("")+'</div>'
+      + '<div class="tiny system" style="letter-spacing:.1em">ИНГРЕДИЕНТЫ</div>'
+      + '<ul class="clean small muted" style="margin:4px 0">'+r.ingredients.map(function(x){return '<li>• '+esc(x)+'</li>';}).join("")+'</ul>'
+      + '<div class="tiny system" style="letter-spacing:.1em">ПРИГОТОВЛЕНИЕ</div>'
+      + '<ol class="clean small muted" style="margin-top:4px">'+r.steps.map(function(x,i){return '<li><span class="system">'+(i+1)+'.</span> '+esc(x)+'</li>';}).join("")+'</ol>'
+      + '</article>';
+  }).join("")+'</div>';
+  html += win("Базовые рецепты","RECIPES",recBody);
+
+  return '<div class="wrap" style="padding-top:24px">'+html+'</div>';
+}
+
+function renderHabits(){
+  var d=derive(), log=todayLog();
+  var done = HABITS.filter(function(h){return log.habitsDone.indexOf(h.id)>=0;}).length;
+  var html = '<div style="margin-bottom:18px"><h1 class="h1 glow" style="font-size:24px;margin:0">КОДЕКС ОХОТНИКА</h1>'
+    + '<p class="muted small">Дисциплина — фундамент силы. Привычки прокачивают характеристики.</p></div>';
+
+  var body = '<div class="grid2">'+HABITS.map(function(h){
+    var dn=log.habitsDone.indexOf(h.id)>=0;
+    return '<button class="item'+(dn?' done':'')+'" data-action="toggle-habit" data-id="'+h.id+'">'
+      + '<span style="flex:none;width:40px;height:40px;border:1px solid rgba(56,189,248,.3);display:flex;align-items:center;justify-content:center;font-size:18px">'+h.icon+'</span>'
+      + '<span style="flex:1"><span class="item-title">'+h.title+'</span><span class="item-sub">'+h.desc+'</span></span>'
+      + '<span class="item-meta"><span class="small system" style="font-weight:700">'+h.stat+'</span><br><span class="tiny amber">+'+h.xp+' XP</span></span></button>';
+  }).join("")+'</div>';
+  html += win("Привычки дня",done+" / "+HABITS.length,body);
+
+  var statsBody='<div class="grid6">'+STATS.map(function(s){
+    return '<div class="stat-box"><div class="system" style="font-size:18px;font-weight:800">'+d.stats[s.key]+'</div>'
+      + '<div class="small" style="font-weight:700">'+s.key+'</div><div class="tiny muted">'+s.ru+'</div></div>';
+  }).join("")+'</div>';
+  html += win("Влияние на характеристики","STATUS",statsBody);
+
+  return '<div class="wrap" style="padding-top:24px">'+html+'</div>';
+}
+
+// ---------- ROOT RENDER ----------
+function render(){
+  var root=document.getElementById("root");
+  if(view==="landing"){ root.innerHTML=renderLanding(); initUnicorn(); return; }
+  if(view==="onboarding"){ root.innerHTML=renderOnboarding(); return; }
+  // app
+  var inner;
+  if(tab==="workout") inner=renderWorkout();
+  else if(tab==="nutrition") inner=renderNutrition();
+  else if(tab==="habits") inner=renderHabits();
+  else inner=renderStatus();
+  root.innerHTML = renderTopNav()+inner;
+}
+
+// ---------- UnicornStudio hero (optional, needs internet) ----------
+var unicornLoaded=false;
+function initUnicorn(){
+  var host=document.getElementById("us-host"); if(!host) return;
+  if(window.innerWidth < 1024) return; // desktop only, like original
+  host.innerHTML='<div data-us-project="OMzqyUv6M3kSnv0JeAtC" style="width:100%;height:100%"></div>';
+  if(unicornLoaded){ if(window.UnicornStudio&&window.UnicornStudio.init){ try{window.UnicornStudio.init();}catch(e){} } return; }
+  if(window.UnicornStudio) return;
+  window.UnicornStudio={isInitialized:false};
+  var i=document.createElement("script");
+  i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.33/dist/unicornStudio.umd.js";
+  i.onload=function(){ if(!window.UnicornStudio.isInitialized){ try{UnicornStudio.init();}catch(e){} window.UnicornStudio.isInitialized=true; unicornLoaded=true; } };
+  (document.head||document.body).appendChild(i);
+}
+
+// ---------- EVENT DELEGATION ----------
+document.addEventListener("click", function(e){
+  var el = e.target.closest("[data-action]"); if(!el) return;
+  var a = el.getAttribute("data-action");
+  if(a==="goto"){
+    var v=el.getAttribute("data-view");
+    if(v==="app" || v==="onboarding" || v==="landing"){ view=v; tab="status"; render(); window.scrollTo(0,0); }
+    return;
+  }
+  if(a==="set-tab"){ tab=el.getAttribute("data-tab"); render(); window.scrollTo(0,0); return; }
+  if(a==="toggle-exercise"){ toggleArr(todayLog().exercisesDone, el.getAttribute("data-id")); save(); render(); return; }
+  if(a==="toggle-habit"){ toggleArr(todayLog().habitsDone, el.getAttribute("data-id")); save(); render(); return; }
+  if(a==="toggle-meal"){ toggleArr(todayLog().mealsDone, el.getAttribute("data-id")); save(); render(); return; }
+  if(a==="water"){ var lg=todayLog(); lg.water=Math.max(0,Math.min(12, lg.water + parseInt(el.getAttribute("data-delta"),10))); save(); render(); return; }
+  if(a==="set-phase"){ state.profile.phase=el.getAttribute("data-phase"); save(); render(); return; }
+  if(a==="open-day"){ openDay=el.getAttribute("data-day"); render(); return; }
+  if(a==="set-fitness"){ state.profile.fitness[el.getAttribute("data-key")]=el.getAttribute("data-level"); save(); render(); return; }
+  if(a==="toggle-group"){ var g=el.getAttribute("data-group"); var arr=state.profile.selectedGroups; var idx=arr.indexOf(g); if(idx>=0)arr.splice(idx,1); else arr.push(g); save(); render(); return; }
+  if(a==="finish-onboarding"){
+    var input=document.getElementById("name-input"); var nm = input? input.value.trim() : "";
+    if(nm) state.profile.name=nm;
+    if(!state.profile.selectedGroups.length) state.profile.selectedGroups=GROUPS.slice();
+    state.profile.onboarded=true; save(); view="app"; tab="status"; render(); window.scrollTo(0,0); return;
+  }
+});
+
+// keep name input value while typing without re-render
+document.addEventListener("input", function(e){
+  if(e.target && e.target.id==="name-input"){ state.profile.name=e.target.value.trim()||"ОХОТНИК"; }
+});
+
+render();
+</script>
+</body>
+</html>
