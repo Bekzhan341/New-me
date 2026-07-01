@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>InterDetailing — Центр детейлинга в Алматы | Оклейка Suntek, Llumar, Spectroll</title>
+<meta name="description" content="InterDetailing — экспертный центр детейлинга в Алматы. Антигравийная оклейка Suntek, Llumar, Spectroll, тонировка, полировка, керамика, химчистка. Рейтинг 5.0." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --bg-2: #101013;
+    --card: #131317;
+    --card-2: #17171c;
+    --line: #26262d;
+    --fg: #f4f4f5;
+    --muted: #a1a1aa;
+    --muted-2: #71717a;
+    --chrome-1: #ffffff;
+    --chrome-2: #b8bcc4;
+    --chrome-3: #8a8f99;
+    --accent: #e5e7eb;
+    --gold: #c8a970;
+    --wa: #25d366;
+    --radius: 16px;
+    --maxw: 1200px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .serif { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 600; letter-spacing: .2px; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+  .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  .chrome-text {
+    background: linear-gradient(180deg, var(--chrome-1) 0%, var(--chrome-2) 45%, var(--chrome-3) 55%, #f0f1f3 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted-2); font-weight: 600; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px;
+    border-radius: 999px; font-weight: 600; font-size: 15px; font-family: "Inter", sans-serif;
+    transition: transform .2s ease, box-shadow .3s ease, background .3s ease; cursor: pointer; border: none;
+  }
+  .btn-wa { background: var(--wa); color: #04220f; }
+  .btn-wa:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -8px rgba(37,211,102,.45); }
+  .btn-ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+  .btn-ghost:hover { border-color: var(--chrome-3); background: rgba(255,255,255,.03); }
+
+  /* NAV */
+  header.nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px); background: rgba(10,10,11,.72);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 74px; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-badge {
+    width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(circle at 30% 25%, #fff, #cfd2d7 60%, #9aa0a8);
+    color: #0a0a0b; font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 20px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
+  }
+  .logo-name { font-family: "Cormorant Garamond", serif; font-size: 21px; font-weight: 600; letter-spacing: .5px; }
+  .logo-name b { font-weight: 700; }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a { font-size: 14px; color: var(--muted); transition: color .2s; }
+  .nav-links a:hover { color: var(--fg); }
+  .nav-cta { display: flex; align-items: center; gap: 14px; }
+  .burger { display: none; background: none; border: none; color: var(--fg); font-size: 26px; }
+
+  /* HERO */
+  .hero { position: relative; padding: 90px 0 70px; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(1000px 500px at 75% 15%, rgba(200,169,112,.10), transparent 60%),
+      radial-gradient(900px 600px at 20% 80%, rgba(120,130,150,.10), transparent 60%),
+      linear-gradient(180deg, #0a0a0b, #0d0d10);
+  }
+  .hero::after {
+    content: ""; position: absolute; inset: 0; z-index: 0; opacity: .35;
+    background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(circle at 50% 40%, #000 40%, transparent 75%);
+  }
+  .hero .wrap { position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px;
+    border: 1px solid var(--line); background: rgba(255,255,255,.02); font-size: 12.5px; color: var(--muted); margin-bottom: 26px;
+  }
+  .stars { color: var(--gold); letter-spacing: 2px; }
+  .hero h1 { font-size: clamp(44px, 8vw, 92px); line-height: 1.02; margin-bottom: 22px; font-weight: 600; }
+  .hero h1 .line2 { font-style: italic; font-weight: 500; }
+  .hero p.lead { font-size: clamp(16px, 2.2vw, 19px); color: var(--muted); max-width: 620px; margin-bottom: 36px; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 54px; }
+  .hero-stats { display: flex; gap: 48px; flex-wrap: wrap; }
+  .hstat .num { font-family: "Cormorant Garamond", serif; font-size: 40px; font-weight: 700; line-height: 1; }
+  .hstat .lbl { font-size: 13px; color: var(--muted-2); margin-top: 6px; }
+
+  .brands { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-2); }
+  .brands .wrap { display: flex; align-items: center; gap: 40px; flex-wrap: wrap; justify-content: center; padding: 26px 24px; }
+  .brands span.t { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted-2); }
+  .brands .b { font-family: "Cormorant Garamond", serif; font-size: 24px; color: var(--chrome-2); letter-spacing: 1px; opacity: .85; }
+
+  /* SECTIONS */
+  section { padding: 96px 0; }
+  .sec-head { text-align: center; max-width: 640px; margin: 0 auto 60px; }
+  .sec-head h2 { font-size: clamp(34px, 5vw, 54px); margin: 14px 0 16px; }
+  .sec-head p { color: var(--muted); font-size: 16px; }
+
+  /* SERVICES */
+  .grid { display: grid; gap: 20px; }
+  .services-grid { grid-template-columns: repeat(3, 1fr); }
+  .card {
+    background: linear-gradient(180deg, var(--card), var(--card-2));
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 32px 28px;
+    transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease; position: relative; overflow: hidden;
+  }
+  .card:hover { transform: translateY(-4px); border-color: var(--chrome-3); box-shadow: 0 24px 50px -24px rgba(0,0,0,.8); }
+  .card .ico {
+    width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 20px;
+    background: linear-gradient(145deg, #1c1c22, #131317); border: 1px solid var(--line); font-size: 24px;
+  }
+  .card h3 { font-size: 25px; margin-bottom: 10px; }
+  .card p { color: var(--muted); font-size: 14.5px; }
+  .card .price { margin-top: 18px; font-size: 13px; color: var(--gold); font-weight: 600; letter-spacing: .5px; }
+
+  /* WHY / FEATURES split */
+  .split { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+  .why-list { list-style: none; display: grid; gap: 22px; margin-top: 30px; }
+  .why-list li { display: flex; gap: 16px; }
+  .why-list .k {
+    flex: 0 0 auto; width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center;
+    background: radial-gradient(circle at 30% 25%, #fff, #cfd2d7 60%, #9aa0a8); color: #0a0a0b; font-weight: 700;
+    font-family: "Cormorant Garamond", serif; font-size: 20px;
+  }
+  .why-list h4 { font-family: "Inter", sans-serif; font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+  .why-list p { color: var(--muted); font-size: 14px; }
+  .visual {
+    aspect-ratio: 4/5; border-radius: 20px; border: 1px solid var(--line); position: relative; overflow: hidden;
+    background:
+      radial-gradient(120% 90% at 70% 10%, rgba(255,255,255,.10), transparent 45%),
+      linear-gradient(160deg, #1a1a20 0%, #0c0c0f 55%, #050506 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .visual .glow { position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) 47%, rgba(255,255,255,.02) 52%, transparent 65%); }
+  .visual .cap { position: absolute; left: 24px; bottom: 24px; }
+  .visual .cap .b { font-family: "Cormorant Garamond", serif; font-size: 32px; }
+  .visual .cap .s { font-size: 13px; color: var(--muted); }
+
+  /* GALLERY */
+  .gallery-grid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 180px; }
+  .tile { border-radius: 14px; border: 1px solid var(--line); position: relative; overflow: hidden; transition: transform .35s ease; }
+  .tile:hover { transform: scale(1.02); }
+  .tile::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,.08) 50%, transparent 60%); }
+  .tile .tag { position: absolute; left: 14px; bottom: 12px; z-index: 2; font-size: 12px; color: #e7e7ea; letter-spacing: .5px; }
+  .g1 { background: linear-gradient(150deg,#23232a,#0b0b0d); }
+  .g2 { background: linear-gradient(150deg,#2a2620,#0d0b08); }
+  .g3 { background: linear-gradient(150deg,#1d2530,#08090b); }
+  .g4 { background: linear-gradient(150deg,#262229,#0a090b); }
+  .span2 { grid-column: span 2; }
+  .rows2 { grid-row: span 2; }
+
+  /* REVIEWS */
+  .reviews-grid { grid-template-columns: repeat(3,1fr); }
+  .review { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
+  .review .stars { margin-bottom: 14px; font-size: 15px; }
+  .review p { font-size: 15px; color: #d4d4d8; margin-bottom: 20px; }
+  .review .who { display: flex; align-items: center; gap: 12px; }
+  .review .av { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(145deg,#2a2a31,#15151a); border: 1px solid var(--line); display: grid; place-items: center; font-weight: 600; font-size: 15px; }
+  .review .who .n { font-size: 14px; font-weight: 600; }
+  .review .who .d { font-size: 12px; color: var(--muted-2); }
+
+  /* CTA / CONTACT */
+  .contact { background: var(--bg-2); border-top: 1px solid var(--line); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: stretch; }
+  .info-row { display: flex; gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .ic { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; background: var(--card); border: 1px solid var(--line); font-size: 20px; }
+  .info-row .lbl { font-size: 12px; color: var(--muted-2); text-transform: uppercase; letter-spacing: 1px; }
+  .info-row .val { font-size: 16px; font-weight: 500; margin-top: 2px; }
+  .map {
+    border-radius: 20px; border: 1px solid var(--line); min-height: 380px; position: relative; overflow: hidden;
+    background:
+      linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px),
+      radial-gradient(circle at 60% 45%, rgba(200,169,112,.14), transparent 55%),
+      linear-gradient(160deg,#131317,#0a0a0b);
+    background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
+  }
+  .map .pin { position: absolute; left: 60%; top: 45%; transform: translate(-50%,-100%); text-align: center; }
+  .map .pin .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--gold); margin: 0 auto; box-shadow: 0 0 0 8px rgba(200,169,112,.18); }
+  .map .pin .t { font-size: 13px; margin-top: 8px; color: var(--fg); font-weight: 600; }
+
+  .final-cta { text-align: center; padding: 110px 0; position: relative; overflow: hidden; }
+  .final-cta::before { content:""; position:absolute; inset:0; background: radial-gradient(700px 350px at 50% 0%, rgba(200,169,112,.12), transparent 60%); }
+  .final-cta .wrap { position: relative; }
+  .final-cta h2 { font-size: clamp(38px, 6vw, 68px); margin-bottom: 20px; }
+  .final-cta p { color: var(--muted); max-width: 560px; margin: 0 auto 34px; font-size: 17px; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--line); padding: 48px 0 40px; background: var(--bg); }
+  .foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+  .foot .muted { color: var(--muted-2); font-size: 13px; }
+  .foot-links { display: flex; gap: 24px; }
+  .foot-links a { font-size: 14px; color: var(--muted); }
+  .foot-links a:hover { color: var(--fg); }
+
+  @media (max-width: 900px) {
+    .services-grid, .reviews-grid { grid-template-columns: 1fr; }
+    .split, .contact-grid { grid-template-columns: 1fr; gap: 36px; }
+    .gallery-grid { grid-template-columns: repeat(2,1fr); }
+    .nav-links { display: none; }
+    .burger { display: block; }
+    section { padding: 72px 0; }
+    .hero-stats { gap: 32px; }
+  }
+  @media (max-width: 520px) {
+    .gallery-grid { grid-template-columns: 1fr; }
+    .span2, .rows2 { grid-column: auto; grid-row: auto; }
+    .hero-actions .btn { flex: 1 1 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="logo" href="#top">
+      <span class="logo-badge">ID</span>
+      <span class="logo-name">Inter<b>Detailing</b></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#services">Услуги</a>
+      <a href="#why">О нас</a>
+      <a href="#gallery">Работы</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="https://wa.me/77000000000" class="btn btn-wa">Написать в WhatsApp</a>
+      <button class="burger" aria-label="Меню">☰</button>
+    </div>
+  </div>
+</header>
+
+<a id="top"></a>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-badge"><span class="stars">★★★★★</span> 5.0 · 39 отзывов на 2ГИС</div>
+    <h1>Детейлинг<br><span class="line2 chrome-text">высшего класса</span></h1>
+    <p class="lead">Экспертный центр детейлинга в Алматы. Профессиональная антигравийная оклейка Suntek, Llumar и Spectroll, тонировка, полировка, керамика и химчистка. Возвращаем автомобилю блеск салона.</p>
+    <div class="hero-actions">
+      <a href="https://wa.me/77000000000" class="btn btn-wa">Записаться в WhatsApp</a>
+      <a href="#services" class="btn btn-ghost">Смотреть услуги →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="num chrome-text">5.0</div><div class="lbl">Рейтинг на 2ГИС</div></div>
+      <div class="hstat"><div class="num chrome-text">39+</div><div class="lbl">Отзывов клиентов</div></div>
+      <div class="hstat"><div class="num chrome-text">100%</div><div class="lbl">Оригинальные плёнки</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS -->
+<div class="brands">
+  <div class="wrap">
+    <span class="t">Работаем на материалах</span>
+    <span class="b">SUNTEK</span>
+    <span class="b">LLUMAR</span>
+    <span class="b">SPECTROLL</span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Услуги</span>
+      <h2>Полный спектр детейлинга</h2>
+      <p>Каждая услуга выполняется вручную мастерами с контролем качества на каждом этапе.</p>
+    </div>
+    <div class="grid services-grid">
+      <div class="card">
+        <div class="ico">🛡️</div>
+        <h3>Антигравийная оклейка</h3>
+        <p>Защита кузова плёнкой Suntek, Llumar, Spectroll — от сколов, царапин и реагентов. Полная или частичная оклейка.</p>
+        <div class="price">Плёнки Suntek · Llumar · Spectroll</div>
+      </div>
+      <div class="card">
+        <div class="ico">🌑</div>
+        <h3>Тонировка стёкол</h3>
+        <p>Атермальная и защитная тонировка премиум-класса. Комфорт в салоне и стиль без потери обзора.</p>
+        <div class="price">Атермальные и защитные плёнки</div>
+      </div>
+      <div class="card">
+        <div class="ico">✨</div>
+        <h3>Полировка кузова</h3>
+        <p>Восстановительная и защитная полировка. Убираем царапины, паутинку и возвращаем глубину цвета.</p>
+        <div class="price">1, 2 и 3-стадийная</div>
+      </div>
+      <div class="card">
+        <div class="ico">💎</div>
+        <h3>Керамическое покрытие</h3>
+        <p>Долговременная защита ЛКП. Гидрофобный эффект, стойкий блеск и лёгкость в уходе на годы.</p>
+        <div class="price">Керамика 9H</div>
+      </div>
+      <div class="card">
+        <div class="ico">🧼</div>
+        <h3>Химчистка салона</h3>
+        <p>Глубокая чистка кожи, ткани, пластика и потолка. Устранение запахов и антибактериальная обработка.</p>
+        <div class="price">Полная и экспресс</div>
+      </div>
+      <div class="card">
+        <div class="ico">💡</div>
+        <h3>Детейлинг оптики</h3>
+        <p>Полировка и бронирование фар. Прозрачность, защита от помутнения и жёлтого налёта.</p>
+        <div class="price">Полировка + бронь</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why" style="background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow">Почему InterDetailing</span>
+      <h2 style="font-size:clamp(32px,5vw,50px); margin:14px 0 6px;">Мастерство, которому<br>доверяют</h2>
+      <p style="color:var(--muted); max-width:520px;">Мы не просто моем машины — мы возвращаем им состояние салона. Рейтинг 5.0 и десятки довольных клиентов говорят сами за себя.</p>
+      <ul class="why-list">
+        <li><span class="k">01</span><div><h4>Только оригинальные материалы</h4><p>Официальные плёнки Suntek, Llumar и Spectroll с гарантией.</p></div></li>
+        <li><span class="k">02</span><div><h4>Рейтинг 5.0 на 2ГИС</h4><p>39+ отзывов от реальных клиентов — репутация, заработанная качеством.</p></div></li>
+        <li><span class="k">03</span><div><h4>Ручная работа мастеров</h4><p>Каждый этап под контролем — без спешки и компромиссов.</p></div></li>
+        <li><span class="k">04</span><div><h4>Удобное расположение</h4><p>ЖК Sholpan City, Бостандыкский район. Работаем ежедневно 10:00–19:00.</p></div></li>
+      </ul>
+    </div>
+    <div class="visual">
+      <div class="glow"></div>
+      <div class="cap"><div class="b chrome-text">InterDetailing</div><div class="s">Центр детейлинга · Алматы</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Наши работы</span>
+      <h2>Автомобили в наших руках</h2>
+      <p>Премиальные автомобили доверяют нам защиту и блеск.</p>
+    </div>
+    <div class="grid gallery-grid">
+      <div class="tile g1 span2 rows2"><span class="tag">Оклейка Suntek · чёрный глянец</span></div>
+      <div class="tile g2"><span class="tag">Керамика</span></div>
+      <div class="tile g3"><span class="tag">Тонировка</span></div>
+      <div class="tile g4 span2"><span class="tag">Полировка кузова</span></div>
+      <div class="tile g3"><span class="tag">Химчистка салона</span></div>
+      <div class="tile g1"><span class="tag">Детейлинг оптики</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews" style="background:var(--bg-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Отзывы</span>
+      <h2>Нас оценивают на 5.0</h2>
+      <p>Что говорят клиенты InterDetailing.</p>
+    </div>
+    <div class="grid reviews-grid">
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>«Оклеили машину Suntek — работа идеальная, ни пылинки под плёнкой. Мастера знают своё дело, всё объяснили и показали.»</p>
+        <div class="who"><span class="av">А</span><div><div class="n">Арман</div><div class="d">Оклейка кузова</div></div></div>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>«Делал керамику и полировку. Машина как новая, блеск невероятный. Отдельное спасибо за отношение к клиенту.»</p>
+        <div class="who"><span class="av">Д</span><div><div class="n">Дмитрий</div><div class="d">Керамика + полировка</div></div></div>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <p>«Лучший детейлинг в Алматы. Химчистка салона на высшем уровне, запахи ушли, кожа как из салона. Рекомендую!»</p>
+        <div class="who"><span class="av">С</span><div><div class="n">Сауле</div><div class="d">Химчистка салона</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact">
+  <div class="wrap">
+    <div class="sec-head" style="text-align:left; margin-bottom:44px;">
+      <span class="eyebrow">Контакты</span>
+      <h2 style="font-size:clamp(32px,5vw,50px);">Приезжайте к нам</h2>
+    </div>
+    <div class="contact-grid">
+      <div>
+        <div class="info-row">
+          <div class="ic">📍</div>
+          <div><div class="lbl">Адрес</div><div class="val">ЖК Sholpan City, ул. Торайгырова, 21/1<br>Алматы, Бостандыкский район</div></div>
+        </div>
+        <div class="info-row">
+          <div class="ic">🕐</div>
+          <div><div class="lbl">Часы работы</div><div class="val">Ежедневно · 10:00 – 19:00</div></div>
+        </div>
+        <div class="info-row">
+          <div class="ic">💬</div>
+          <div><div class="lbl">Связаться</div><div class="val">WhatsApp — ответим быстро</div></div>
+        </div>
+        <div class="info-row">
+          <div class="ic">⭐</div>
+          <div><div class="lbl">Репутация</div><div class="val">5.0 · 39 отзывов на 2ГИС</div></div>
+        </div>
+        <div style="margin-top:28px;">
+          <a href="https://wa.me/77000000000" class="btn btn-wa">Написать в WhatsApp</a>
+        </div>
+      </div>
+      <div class="map">
+        <div class="pin"><div class="dot"></div><div class="t">InterDetailing</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="wrap">
+    <span class="eyebrow">Готовы преобразить авто?</span>
+    <h2 class="chrome-text">Запишитесь на детейлинг</h2>
+    <p>Оставьте заявку в WhatsApp — подберём услугу под ваш автомобиль и рассчитаем стоимость.</p>
+    <a href="https://wa.me/77000000000" class="btn btn-wa">Записаться сейчас</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap foot">
+    <a class="logo" href="#top">
+      <span class="logo-badge">ID</span>
+      <span class="logo-name">Inter<b>Detailing</b></span>
+    </a>
+    <div class="foot-links">
+      <a href="#services">Услуги</a>
+      <a href="#gallery">Работы</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#contact">Контакты</a>
+    </div>
+    <div class="muted">© 2026 InterDetailing · Алматы</div>
+  </div>
+</footer>
+
+<script>
+  document.querySelector('.burger').addEventListener('click', function(){
+    var l = document.querySelector('.nav-links');
+    if (l.style.display === 'flex') { l.style.display=''; }
+    else {
+      l.style.display='flex'; l.style.position='absolute'; l.style.top='74px'; l.style.left='0';
+      l.style.right='0'; l.style.flexDirection='column'; l.style.background='rgba(10,10,11,.97)';
+      l.style.padding='20px 24px'; l.style.gap='18px'; l.style.borderBottom='1px solid var(--line)';
+    }
+  });
+</script>
+</body>
+</html>
